@@ -10,14 +10,14 @@
     
     <!-- Country List -->
     <div v-if="!selectedCountry && !loading && !error" class="country-grid">
-      <div v-for="country in countries" :key="country.common" class="country-card">
+      <div v-for="country in countries" :key="country.name.common" class="country-card">
         <img 
-          :src="country.png" 
-          :alt="`${country.common} flag`" 
-          @click="fetchCountryDetails(country.common)"
+          :src="country.flags.png" 
+          :alt="`${country.name.common} flag`" 
+          @click="fetchCountryDetails(country.name.common)"
           class="flag-image"
         >
-        <p>{{ country.common }}</p>
+        <p>{{ country.name.common }}</p>
       </div>
     </div>
 
@@ -63,13 +63,13 @@ export default {
         this.loading = false;
       }
     },
-    async fetchCountryDetails(countryName) {
+    async fetchCountryDetails(name) {
       try {
         this.loading = true;
-        const response = await fetch(`https://localhost:7033/api/Country/details/${encodeURIComponent(countryName)}`, {
+        const response = await fetch(`https://localhost:7033/api/Country/details/${encodeURIComponent(name)}`, {
           mode: 'cors',
         });
-        if (!response.ok) throw new Error(`Failed to fetch details for ${countryName}: ${response.statusText}`);
+        if (!response.ok) throw new Error(`Failed to fetch details for ${name}: ${response.statusText}`);
         this.selectedCountry = await response.json();
         console.log('Country details fetched:', this.selectedCountry);
       } catch (error) {

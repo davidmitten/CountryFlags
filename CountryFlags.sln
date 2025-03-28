@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryAPI", "CountryAPI\CountryAPI.csproj", "{1917A6B6-5149-405E-B905-6CE1570D0CC2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryApi", "CountryAPI\CountryApi.csproj", "{1917A6B6-5149-405E-B905-6CE1570D0CC2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryAPI.UnitTests", "CountryAPI.UnitTests\CountryAPI.UnitTests.csproj", "{458532D8-DED2-4582-8722-0ED4A850C7BD}"
 EndProject

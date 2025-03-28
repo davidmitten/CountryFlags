@@ -1,12 +1,17 @@
-﻿using CountryAPI.Models;
+﻿using System.Net.Http;
 using System.Text.Json;
-using System.Net.Http;
+using System.Threading.Tasks;
 
-namespace CountryAPI.Services
+namespace CountryApi.Services
 {
     public class CountryService : ICountryService
     {
         private readonly HttpClient _httpClient;
+
+        public CountryService(IHttpClientFactory httpClientFactory)
+        {
+            _httpClient = httpClientFactory.CreateClient();
+        }
 
         public CountryService(HttpClient httpClient)
         {
@@ -14,7 +19,7 @@ namespace CountryAPI.Services
             _httpClient.BaseAddress = new Uri("https://restcountries.com/v3.1/");
         }
 
-        public async Task<List<CountryFlagDto>> GetAllCountriesAsync()
+        public async Task<List<Country>> GetAllCountriesAsync()
         {
             var response = await _httpClient.GetAsync("all");
             response.EnsureSuccessStatusCode();
@@ -24,11 +29,11 @@ namespace CountryAPI.Services
                 PropertyNameCaseInsensitive = true
             });
 
-            return countries?.Select(c => new CountryFlagDto
+            return countries?.Select(c => new Country
             {
-                Common = c.Name.Common,
-                Png = c.Flags.Png
-            }).ToList() ?? new List<CountryFlagDto>();
+                Name = c.Name,
+                Flags = c.Flags
+            }).ToList() ?? new List<Country>();
         }
 
         public async Task<Country?> GetCountryDetailsAsync(string name)

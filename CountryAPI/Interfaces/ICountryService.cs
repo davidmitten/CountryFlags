@@ -1,10 +1,8 @@
-﻿using CountryAPI.Models;
-
-namespace CountryAPI.Services
+﻿namespace CountryApi.Services
 {
     public interface ICountryService
     {
-        Task<List<CountryFlagDto>> GetAllCountriesAsync();
+        Task<List<Country>> GetAllCountriesAsync();
         Task<Country?> GetCountryDetailsAsync(string name);
     }
 }
