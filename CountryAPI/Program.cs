@@ -1,7 +1,11 @@
+using CountryAPI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddHttpClient();
+//builder.Services.AddHttpClient();
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddHttpClient<ICountryService, CountryService>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new() { Title = "Country API", Version = "v1" });
