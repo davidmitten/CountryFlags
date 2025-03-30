@@ -1,0 +1,127 @@
+﻿name: CI/CD Pipeline for CountryApi and countryapiui
+
+# Trigger the pipeline on push or pull request to the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Environment variables
+env:
+  DOTNET_VERSION: '9.0.x'  # Adjust to your .NET version
+  NODE_VERSION: '20.x'     # Adjust to your Node.js version
+  BACKEND_PATH: './CountryApi'
+  INTEGRATION_TESTS_PATH: './CountryAPIIntegrationTests'
+  UNIT_TESTS_PATH: './CountryAPIUnitTests'
+  FRONTEND_PATH: './countryapiui'
+  ARTIFACTS_PATH: './artifacts'
+
+jobs:
+  # Job 1: Run Unit Tests
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore unit test dependencies
+        run: dotnet restore ${{ env.UNIT_TESTS_PATH }}
+
+      - name: Run unit tests
+        run: dotnet test ${{ env.UNIT_TESTS_PATH }} --verbosity normal --no-restore
+
+  # Job 2: Run Integration Tests
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore integration test dependencies
+        run: dotnet restore ${{ env.INTEGRATION_TESTS_PATH }}
+
+      - name: Run integration tests
+        run: dotnet test ${{ env.INTEGRATION_TESTS_PATH }} --verbosity normal --no-restore
+
+  # Job 3: Run Frontend Tests
+  frontend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install frontend dependencies
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm install
+
+      - name: Run frontend tests
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm test
+
+  # Job 4: Build and Package
+  build-and-package:
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, frontend-tests]  # Only runs if all tests pass
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Backend Build and Package
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore backend dependencies
+        run: dotnet restore ${{ env.BACKEND_PATH }}
+
+      - name: Build backend
+        run: dotnet build ${{ env.BACKEND_PATH }} --configuration Release --no-restore
+
+      - name: Publish backend
+        run: dotnet publish ${{ env.BACKEND_PATH }} --configuration Release --output ${{ env.ARTIFACTS_PATH }}/backend --no-build
+
+      # Frontend Build and Package
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install frontend dependencies
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm install
+
+      - name: Build frontend
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: npm run build
+
+      - name: Package frontend
+        working-directory: ${{ env.FRONTEND_PATH }}
+        run: |
+          mkdir -p ${{ env.ARTIFACTS_PATH }}/frontend
+          cp -r ./dist/* ${{ env.ARTIFACTS_PATH }}/frontend  # Assumes Vue outputs to 'dist'
+
+      # Upload artifacts
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-packages
+          path: ${{ env.ARTIFACTS_PATH }}
