@@ -10,8 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CountryAPI.IntegrationTests", "CountryAPI.IntegrationTests\CountryAPI.IntegrationTests.csproj", "{E1D2CAF8-8FEB-46C3-9DE1-739C9D7456E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "countryui", "countryui\countryui.csproj", "{9090FBDD-EDDD-49C5-A251-081B68EB0D32}"
-	ProjectSection(ProjectDependencies) = postProject
-		{1917A6B6-5149-405E-B905-6CE1570D0CC2} = {1917A6B6-5149-405E-B905-6CE1570D0CC2}
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{573364BC-EAC4-40EB-9D35-27CFF0BB9FB1}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
